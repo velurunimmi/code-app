@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Language-Based Quiz App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+        .app-container {
+            background: #0f172a;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 650px;
+            border: 1px solid #334155;
+        }
+        .hidden { display: none; }
+        h2 { color: #38bdf8; text-align: center; margin-bottom: 20px; }
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #475569;
+            background: #1e293b;
+            color: #fff;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        label { font-weight: bold; color: #94a3b8; display: block; }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .run-btn { background: #10b981; margin-top: 15px; }
+        .run-btn:hover { background: #059669; }
+        .msg { text-align: center; margin-top: 10px; font-weight: bold; }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0 20px 0;
+        }
+        .checkbox-label {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            font-weight: normal;
+        }
+        .checkbox-label input { width: 18px; height: 18px; cursor: pointer; }
+
+        .code-editor {
+            background: #000;
+            color: #38bdf8;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            resize: none;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .terminal {
+            background: #000;
+            color: #22c55e;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            min-height: 50px;
+            border: 1px solid #334155;
+            margin-bottom: 15px;
+        }
+
+        .question-card {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #475569;
+        }
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .option-label {
+            background: #0f172a;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        .option-label:hover { background: #1e293b; border-color: #38bdf8; }
+        .result-box { text-align: center; font-size: 18px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Screen 1: Login -->
+    <div id="login-screen">
+        <h2>🔐 People Code Skills - Login</h2>
+        <label>Enter Name:</label>
+        <input type="text" id="username" class="input-box" placeholder="మీ పేరు రాయండి">
+        
+        <label>Enter Password:</label>
+        <input type="password" id="password" class="input-box" placeholder="పాస్‌వర్డ్ రాయండి">
+        
+        <button class="btn" onclick="loginApp()">Login</button>
+        <div id="login-msg" class="msg"></div>
+    </div>
+
+    <!-- Screen 2: Select Languages & Type Code -->
+    <div id="ide-screen" class="hidden">
+        <h2>✍️ Select Language & Type Code</h2>
+        <label>మీకు నచ్చిన లాంగ్వేజ్ సెలెక్ట్ చేసుకోండి (ఒకటి లేదా అంతకంటే ఎక్కువ):</label>
+        
+        <div class="checkbox-group">
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="c"> C Language</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="cpp"> C++ Language</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="java"> Java</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="python"> Python</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="sql"> SQL</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="html"> HTML</label>
+            <label class="checkbox-label"><input type="checkbox" name="lang" value="css"> CSS</label>
+        </div>
+
+        <label>మీకు నచ్చిన కోడ్ ఇక్కడ టైప్ చేయండి:</label>
+        <textarea id="user-code-input" class="code-editor" placeholder="// Type your code here..."></textarea>
+
+        <div class="terminal" id="terminal-box">
+            Editor ready. Select language, type code & click '▶ Run Code'...
+        </div>
+        
+        <button class="btn run-btn" onclick="runUserCode()">▶ Run Code</button>
+    </div>
+
+    <!-- Screen 3: Quiz Questions (5 Questions based on selected language) -->
+    <div id="quiz-screen" class="hidden">
+        <h2>📝 5 Questions Quiz (Selected Language)</h2>
+        <div id="questions-container"></div>
+        <button class="btn" onclick="submitAnswers()">Submit Quiz</button>
+    </div>
+
+    <!-- Screen 4: Results -->
+    <div id="result-screen" class="hidden">
+        <h2>🏆 Final Evaluation</h2>
+        <div id="result-text" class="result-box"></div>
+        <br>
+        <button class="btn" onclick="goToQuestionsAgain()">🔄 Try Again (Back to Questions)</button>
+    </div>
+
+</div>
+
+<script>
+    let selectedLang = 'python'; // డిఫాల్ట్ లాంగ్వేజ్
+
+    function loginApp() {
+        const name = document.getElementById("username").value.trim();
+        const pass = document.getElementById("password").value.trim();
+        const msg = document.getElementById("login-msg");
+
+        if (name !== "" && pass !== "") {
+            msg.className = "msg success";
+            msg.innerHTML = "✅ Login Successful";
+            setTimeout(() => {
+                document.getElementById("login-screen").classList.add("hidden");
+                document.getElementById("ide-screen").classList.remove("hidden");
+            }, 1000);
+        } else {
+            msg.className = "msg error";
+            msg.innerHTML = "❌ Please fill both fields!";
+        }
+    }
+
+    function runUserCode() {
+        const checkboxes = document.querySelectorAll('input[name="lang"]:checked');
+        const codeText = document.getElementById("user-code-input").value.trim();
+        const term = document.getElementById("terminal-box");
+
+        if (checkboxes.length === 0) {
+            alert("దయచేసి కనీసం ఒక లాంగ్వేజ్ సెలెక్ట్ చేసుకోండి!");
+            return;
+        }
+
+        if (codeText === "") {
+            alert("దయచేసి ఎడిటర్‌లో ఏదైనా కోడ్ టైప్ చేయండి!");
+            return;
+        }
+
+        // యూజర్ మొదట సెలెక్ట్ చేసిన లాంగ్వేజ్‌ని తీసుకోవడం
+        selectedLang = checkboxes[0].value;
+
+        term.innerHTML = "> Compiling user code...<br>";
+
+        setTimeout(() => {
+            term.innerHTML += "> Running syntax checks for " + selectedLang.toUpperCase() + "...<br>";
+        }, 700);
+
+        setTimeout(() => {
+            term.innerHTML += "> Execution Successful! Opening 5 Questions...";
+        }, 1400);
+
+        setTimeout(() => {
+            buildQuizQuestions();
+            document.getElementById("ide-screen").classList.add("hidden");
+            document.getElementById("quiz-screen").classList.remove("hidden");
+        }, 2200);
+    }
+
+    function buildQuizQuestions() {
+        const container = document.getElementById("questions-container");
+        container.innerHTML = "";
+
+        // ప్రతి లాంగ్వేజ్‌కి ప్రత్యేకంగా 5 ప్రశ్నలు మరియు వాటి ఆప్షన్స్
+        const questionBanks = {
+            python: [
+                { q: "1. Python లో అవుట్‌పుట్ ప్రింట్ చేయడానికి ఏ ఫంక్షన్ వాడతారు?", options: ["display()", "print()", "echo()", "printf()"], correct: 1 },
+                { q: "2. Python లో కామెంట్స్ రాయడానికి ఏ సింబల్ వాడతారు?", options: ["//", "#", "/*", "<!--"], correct: 1 },
+                { q: "3. Python లో యూజర్ నుండి ఇన్‌పుట్ తీసుకోవడానికి ఏ ఫంక్షన్ వాడతారు?", options: ["input()", "scan()", "get()", "read()"], correct: 0 },
+                { q: "4. క్రింది వాటిలో Python డేటా టైప్ కానిది ఏది?", options: ["int", "float", "char", "str"], correct: 2 },
+                { q: "5. Python లో ఫంక్షన్ డిఫైన్ చేయడానికి ఏ కీవర్డ్ వాడతారు?", options: ["func", "define", "def", "function"], correct: 2 }
+            ],
+            c: [
+                { q: "1. C Language లో అవుట్‌పుట్ ప్రింట్ చేయడానికి ఏ ఫంక్షన్ వాడతారు?", options: ["print()", "printf()", "cout", "echo"], correct: 1 },
+                { q: "2. C లో మెయిన్ ఫంక్షన్ రిటన్ టైప్ సాధారణంగా ఏమిటి?", options: ["void", "int", "float", "char"], correct: 1 },
+                { q: "3. C లో కొత్త లైన్‌లోకి వెళ్ళడానికి ఏ ఎస్కేప్ సీక్వెన్స్ వాడతారు?", options: ["\\t", "\\n", "\\r", "\\b"], correct: 1 },
+                { q: "4. C లో ఇన్‌పుట్ తీసుకోవడానికి ఏ ఫంక్షన్ వాడతారు?", options: ["scanf()", "input()", "get()", "cin"], correct: 0 },
+                { q: "5. C లాంగ్వేజ్‌ని ఎవరు కనిపెట్టారు?", options: ["Dennis Ritchie", "James Gosling", "Guido van Rossum", "Bjarne Stroustrup"], correct: 0 }
+            ],
+            cpp: [
+                { q: "1. C++ లో అవుట్‌పుట్ ప్రింట్ చేయడానికి ఏ ఆబ్జెక్ట్ వాడతారు?", options: ["printf", "cout", "print", "system.out"], correct: 1 },
+                { q: "2. C++ లో ఇన్‌పుట్ తీసుకోవడానికి ఏ ఆబ్జెక్ట్ వాడతారు?", options: ["cin", "scanf", "input", "get"], correct: 0 },
+                { q: "3. C++ ని ఎవరు కనిపెట్టారు?", options: ["Bjarne Stroustrup", "Dennis Ritchie", "Ken Thompson", "Rasmus Lerdorf"], correct: 0 },
+                { q: "4. C++ లో ఆబ్జెక్ట్ ఓరియెంటెడ్ ఫీచర్స్‌లో ముఖ్యమైనది?", options: ["Classes & Objects", "Pointers only", "Goto statements", "None"], correct: 0 },
+                { q: "5. C++ లో హెడర్ ఫైల్ ఎక్స్‌టెన్షన్ సాధారణంగా ఏమిటి?", options: [".h లేదా లేకుండా", ".cpp", ".java", ".py"], correct: 0 }
+            ],
+            java: [
+                { q: "1. Java లో మెయిన్ మెథడ్ సిగ్నేచర్ ఏమిటి?", options: ["main()", "public static void main(String[] args)", "void main()", "start()"], correct: 1 },
+                { q: "2. Java ని ఏ కంపెనీ అభివృద్ధి చేసింది?", options: ["Microsoft", "Sun Microsystems", "Apple", "Google"], correct: 1 },
+                { q: "3. Java లో ప్రింట్ చేయడానికి ఏది వాడతారు?", options: ["System.out.println()", "printf()", "cout", "print()"], correct: 0 },
+                { q: "4. Java లో ఆబ్జెక్ట్ క్రియేట్ చేయడానికి ఏ కీవర్డ్ వాడతారు?", options: ["create", "new", "object", "init"], correct: 1 },
+                { q: "5. Java ఏ రకమైన లాంగ్వేజ్?", options: ["Purely Procedural", "Platform Independent / OOP", "Scripting only", "Markup"], correct: 1 }
+            ],
+            sql: [
+                { q: "1. SQL లో డేటాని రిట్రీవ్ చేయడానికి ఏ క్వెరీ వాడతారు?", options: ["GET", "SELECT", "OPEN", "FETCH"], correct: 1 },
+                { q: "2. డేటాని కొత్తగా యాడ్ చేయడానికి ఏ కీవర్డ్ వాడతారు?", options: ["ADD", "INSERT INTO", "UPDATE", "CREATE"], correct: 1 },
+                { q: "3. టేబుల్‌ని డిలీట్ చేయడానికి ఏ కమాండ్ వాడతారు?", options: ["REMOVE TABLE", "DROP TABLE", "CLEAR TABLE", "DELETE TABLE"], correct: 1 },
+                { q: "4. డూప్లికేట్ రోస్‌ని తొలగించడానికి ఏ కీవర్డ్ వాడతారు?", options: ["UNIQUE", "DISTINCT", "DIFFERENT", "SINGLE"], correct: 1 },
+                { q: "5. SQL పూర్తి రూపం ఏమిటి?", options: ["Structured Query Language", "Simple Question Language", "System Quality Language", "Sequential Query Lang"], correct: 0 }
+            ],
+            html: [
+                { q: "1. HTML పూర్తి రూపం ఏమిటి?", options: ["Hyper Text Markup Language", "High Tech Multi Language", "Hyper Transfer Machine Lang", "None"], correct: 0 },
+                { q: "2. మెయిన్ హెడ్డింగ్ కోసం ఏ టాగ్ వాడతారు?", options: ["<h6>", "<head>", "<h1>", "<p>"], correct: 2 },
+                { q: "3. లింక్ క్రియేట్ చేయడానికి ఏ టాగ్ వాడతారు?", options: ["<a>", "<link>", "<href>", "<url>"], correct: 0 },
+                { q: "4. ఇమేజ్ ఇన్సర్ట్ చేయడానికి ఏ టాగ్ వాడతారు?", options: ["<image>", "<img>", "<pic>", "<src>"], correct: 1 },
+                { q: "5. టేబుల్ రో కోసం ఏ టాగ్ వాడతారు?", options: ["<td>", "<tr>", "<th>", "<table-row>"], correct: 1 }
+            ],
+            css: [
+                { q: "1. CSS పూర్తి రూపం ఏమిటి?", options: ["Colorful Style Sheets", "Cascading Style Sheets", "Computer Style Sheets", "Creative Style Sheets"], correct: 1 },
+                { q: "2. బ్యాక్‌గ్రౌండ్ కలర్ మార్చడానికి ఏ ప్రాపర్టీ వాడతారు?", options: ["color", "background-color", "bg-color", "image-color"], correct: 1 },
+                { q: "3. టెక్స్ట్ కలర్ మార్చడానికి ఏ ప్రాపర్టీ వాడతారు?", options: ["text-color", "color", "font-color", "foreground"], correct: 1 },
+                { q: "4. హెచ్‌టిఎంఎల్ ఎలిమెంట్‌కి మార్జిನ್ ఇవ్వడానికి ఏది వాడతారు?", options: ["spacing", "margin", "padding", "border"], correct: 1 },
+                { q: "5. ఎక్స్‌టర్నల్ CSS ఫైల్ ఎక్స్‌టెన్షన్ ఏమిటి?", options: [".html", ".css", ".style", ".js"], correct: 1 }
+            ]
+        };
+
+        let currentQuestions = questionBanks[selectedLang] || questionBanks['python'];
+
+        currentQuestions.forEach((item, index) => {
+            let div = document.createElement("div");
+            div.className = "question-card";
+            
+            let optionsHTML = "";
+            item.options.forEach((opt, optIndex) => {
+                optionsHTML += `
+                    <label class="option-label">
+                        <input type="radio" name="q${index}" value="${optIndex}"> ${opt}
+                    </label>
+                `;
+            });
+
+            div.innerHTML = `
+                <label style="margin-bottom: 10px;">${item.q}</label>
+                <div class="options-group">${optionsHTML}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        // స్టోర్ చేసుకోవడానికి ప్రస్తుతం సెలెక్ట్ అయిన క్వెశ్చన్స్ డేటా
+        window.currentQuestionsData = currentQuestions;
+    }
+
+    function submitAnswers() {
+        let score = 0;
+        let total = 5;
+        let currentQuestions = window.currentQuestionsData;
+
+        for (let i = 0; i < total; i++) {
+            let selectedOpt = document.querySelector(`input[name="q${i}"]:checked`);
+            if (selectedOpt && parseInt(selectedOpt.value) === currentQuestions[i].correct) {
+                score++;
+            }
+        }
+
+        let resHTML = `🎯 <b>Score: ${score} / ${total}</b><br>`;
+        if (score === 5) {
+            resHTML += `⭐ <b>All Correct! Excellent Performance in ${selectedLang.toUpperCase()}!</b>`;
+        } else if (score >= 3) {
+            resHTML += `👍 <b>Good Job! Keep it up!</b>`;
+        } else {
+            resHTML += `❌ <b>Keep Practicing & Try Again!</b>`;
+        }
+
+        document.getElementById("quiz-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+        document.getElementById("result-text").innerHTML = resHTML;
+    }
+
+    function goToQuestionsAgain() {
+        buildQuizQuestions(); // మళ్ళీ అవే ప్రశ్నలను లోడ్ చేస్తుంది
+        document.getElementById("result-screen").classList.add("hidden");
+        document.getElementById("quiz-screen").classList.remove("hidden");
+    }
+</script>
+
+</body>
+</html>
